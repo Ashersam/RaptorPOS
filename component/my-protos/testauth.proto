@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package ngo.auth.v1;
+
+message LoginUserRequest {
+        // all parameters are mandatory
+        string  userId = 1;
+        string  password = 2;
+}
+
+message LoginUserResponse {
+        string  accessToken = 1;
+}
+
+service NgoAuth {
+        rpc loginUser(LoginUserRequest) returns (LoginUserResponse) {};
+}

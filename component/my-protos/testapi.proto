@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package ngoapi;
+
+message UUID {
+        string  uuid = 1;
+}
+
+message StreamEventsRequest{
+        // tenantId is compulsary
+        // eventType is compulsary, in ["config", "sales"]
+        // i.e. we won't provide a "get ALL events" stream request
+        // but we will provide a "get ALL config events" or "get ALL sales events"
+        // eventSubType is not compulsary 
+        // at least one eventAction is compulsary, in ["create", "delete", "update"]
+        // if lastindex is not provided, we start from "now"
+        UUID    tenantId = 1;
+        string  eventType = 2;
+        repeated        string  eventSubtype = 3;
+        repeated        string  eventAction = 4;
+        string  lastindex = 5;
+}
+
+message EventTuple{
+        string  key = 1;
+        string  value = 2;
+}
+
+message StreamEventsResponse {
+        string  index = 1;
+        string  eventType = 2;
+        string  eventAction = 3;
+        repeated        EventTuple      eventTuple = 4;
+}
+
+service NgoAPI {
+        // subscribe to, and get event details
+        rpc streamEvents(StreamEventsRequest) returns (stream StreamEventsResponse) {};
+}
+
