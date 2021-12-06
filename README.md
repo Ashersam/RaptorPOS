@@ -1,2 +1,2 @@
 # RaptorPos
-Sales Display App Nextjs and gRPC API
+Sales Display App using Nextjs and gRPC API
