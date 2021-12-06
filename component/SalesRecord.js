@@ -30,7 +30,8 @@ const SalesRecord = () => {
   useEffect(() => {
     handleGrouping()
   })
-  // customizing the 
+  
+  // customizing the objects
   const salesSummaryGroup = (
     <>
     {customizeRecords && Object.entries(customizeRecords).map(([key, value]) =>(
