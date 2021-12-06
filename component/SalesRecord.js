@@ -14,6 +14,8 @@ const SalesRecord = () => {
     actions: {
       handleLogout,
       fetchSalesRecord,
+      setCustomizeRecords,
+      groupPostsbyUserID
     }
   } = useContext(SalesContext);
 
@@ -21,13 +23,20 @@ const SalesRecord = () => {
     fetchSalesRecord() // api fetch on comp load
   }, [])
 
+  function handleGrouping() {
+    setCustomizeRecords(groupPostsbyUserID(salesRecord, "eventtype"))
+  }
+
+  useEffect(() => {
+    handleGrouping()
+  })
   // customizing the 
   const salesSummaryGroup = (
     <>
     {customizeRecords && Object.entries(customizeRecords).map(([key, value]) =>(
       <>
       {key=== 'sales_summary' && (
-        <section classNameName="py-1 bg-blue Gray-50">
+        <section className="py-1 bg-blue Gray-50">
             <div className="block w-full overflow-x-auto">
                 <table className="items-center bg-transparent w-full border-collapse ">
                     <tr>
@@ -62,8 +71,8 @@ const SalesRecord = () => {
     {customizeRecords && Object.entries(customizeRecords).map(([key, value]) =>(
       <>
       {key=== 'order_item' && (
-        <section className="py-1 bg-blue Gray-50">
-            <div className="block w-full overflow-x-auto">
+        <section key={value} className="py-1 bg-blue Gray-50">
+            <div key={value}  className="block w-full overflow-x-auto">
                 <table className="items-center bg-transparent w-full border-collapse ">
                     <tr>
                     {value[0].eventtupleList.map((headers) => (
@@ -97,11 +106,11 @@ const SalesRecord = () => {
     {customizeRecords && Object.entries(customizeRecords).map(([key, value]) =>(
       <>
       {key=== 'order' && (
-        <section className="py-1 bg-blueGray-50">
-            <div className="block w-full overflow-x-auto">
+        <section key={value}  className="py-1 bg-blueGray-50">
+            <div key={value}  className="block w-full overflow-x-auto">
                 <table className="items-center bg-transparent w-full border-collapse ">
                     <tr>
-                    {value[0].eventtupleList.map((headers, index) => (
+                    {value[0].eventtupleList.map((headers) => (
                           <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
                           {headers.key}
                           </th>

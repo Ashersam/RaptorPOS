@@ -32,7 +32,7 @@ const Login = () => {
             const { status, statusMessage, message } = res;
               setErrorMsg(statusMessage)
                 if (status === grpc.Code.OK && message) {
-                  console.log("Got access token ", message.toObject());
+                  console.log("Got access token ");
                   setAccessToken(message.toObject().accesstoken)
                 }
           }
