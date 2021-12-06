@@ -1,34 +1,35 @@
 import {grpc} from "@improbable-eng/grpc-web";
-import { useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import React from "react";
 import { NgoAuth } from "./my-protos/testauth_pb_service";
 import { LoginUserRequest } from "./my-protos/testauth_pb";
 import { environmental } from "../environmental";
 import SalesRecord from "./SalesRecord";
+import { SalesContext } from "./context/SalesContext";
 
-const Dashboard = () => {
-   
-    const [accessToken, setAccessToken] = useState()
+const Login = () => {
     const [userID, setUserId] = useState('')
     const [password, setPassword] = useState('')
     const [errorMsg, setErrorMsg] = useState('')
-
-    useEffect(() => {
-      
-    },[])
+    const {
+      states: {
+        accessToken,
+      },
+      actions: {
+        setAccessToken
+      }
+    } = useContext(SalesContext);
 
     const handleLogin = (e, username, pass) => {
         e.preventDefault()
         const getLoginUserRequest = new LoginUserRequest();
         getLoginUserRequest.setUserid(username)
         getLoginUserRequest.setPassword(pass)
-        // getBookRequest.setIsbn(60929871);
         grpc.unary(NgoAuth.loginUser , {
           request: getLoginUserRequest,
           host: environmental.HOST,
           onEnd: res => {
-            console.log(res)
-            const { status, statusMessage, headers, message, trailers } = res;
+            const { status, statusMessage, message } = res;
               setErrorMsg(statusMessage)
                 if (status === grpc.Code.OK && message) {
                   console.log("Got access token ", message.toObject());
@@ -42,7 +43,7 @@ const Dashboard = () => {
         return (
           <>
               {accessToken ? (
-                  <SalesRecord OBTAINED_TOKEN={accessToken} setAccessToken={setAccessToken}/>
+                  <SalesRecord />
                 ) : (
                   <div className="flex items-center h-screen w-full">
                     <div className="w-full bg-white rounded shadow-lg p-8 m-4 md:max-w-sm md:mx-auto">
@@ -78,7 +79,7 @@ const Dashboard = () => {
                               onChange={(e) => setPassword(e.target.value)} 
                               />
                           </div>
-                          <button className="bg-green-500 hover:bg-green-700 
+                          <button className="bg-blue-500 hover:bg-blue-700 
                             text-white uppercase text-sm font-semibold 
                             px-4 py-2 rounded"
                             onClick={(e) => handleLogin(e, userID, password)}>
@@ -92,4 +93,4 @@ const Dashboard = () => {
         )
 }
  
-export default Dashboard;
+export default Login;

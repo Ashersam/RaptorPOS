@@ -1,9 +1,12 @@
-import Dashboard from '../component/Dashboard.js'
+import SalesContextProvider from '../component/context/SalesContext.js'
+import Login from '../component/Login.js'
 
 export default function Home() {
   return (
-    <div className="container">
-      <Dashboard />
-    </div>
+    <>
+      <SalesContextProvider>
+        <Login />
+      </SalesContextProvider>
+    </>
   )
 }
