@@ -66,7 +66,6 @@ const SalesRecord = () => {
 
   const handleSeachData = useCallback(
     (_query, data, filterType) => {
-      console.log(_query)
       setQuery(_query)
       const _filteredData = []
       let _selectedFilter = filterType
