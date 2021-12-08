@@ -24,22 +24,20 @@ const SalesRecord = () => {
       fetchSalesRecord,
       setCustomizeRecords,
       groupPostsbyUserID,
-      setEvenType
+      setEvenType,
+      handleEventType
     }
   } = useContext(SalesContext);
 
   useEffect(() => {
     fetchSalesRecord(eventAction)
-    handleGrouping() // api fetch on comp 
+    handleGrouping()// api fetch on comp 
   }, [])
 
   function handleGrouping() {
     setCustomizeRecords(groupPostsbyUserID(salesRecord, "eventtype"))
+    handleEventType()
   }
-
-  useEffect(() => {
-    handleGrouping()
-  },[salesRecord ,isLoading])
 
   useEffect(() => {
     handleSearchFilter()
@@ -79,8 +77,6 @@ const SalesRecord = () => {
           .map(item => ({...item, child: item[selectedFilter].filter(child => {
               if(child.value.includes(query.toLowerCase())){
                 if(child.key===subfilter){
-                  console.log(child.key)
-                  console.log(item)
                   _filteredData.push(item)
                 }
                 }
@@ -99,7 +95,7 @@ const SalesRecord = () => {
     <>
     {customizeRecords && Object.entries(customizeRecords).map(([key, value]) =>(
       <>
-      {key=== recordtype && (
+      {key === recordtype && (
         <>
         <section key={value} className="py-1 bg-blue Gray-50">
         <div onClick={() => handleSearchFilter(value[0])} className="flex items-center justify-center">

@@ -48,37 +48,37 @@ export default function SalesContextProvider({ children }) {
                     console.log("header", header)
                 }),
                 onMessage: ((message) => {
+                  setIsLoading(true)
                    sales.push(message.toObject())
                     localforage.setItem("salesrecord",sales).then((records) => {
-                        if(records.length > 10){
+                        if(records.length > 84){
                             setSalesRecord(records)
                             setIsLoading(false)
+                            setCustomizeRecords(groupPostsbyUserID(salesRecord, "eventtype"))
                         }else{
                             setIsLoading(true)
                         }
-                            
-                    }).then(() =>{
-                        if(customizeRecords){
-                          setCustomizeRecords(groupPostsbyUserID(salesRecord, "eventtype"))
-                          Object.entries(customizeRecords).map(([key, value]) => {
-                            if(evenType.includes(key) === false){
-                              const _eventType = [...evenType]
-                              _eventType.push(key)
-                              setEvenType(_eventType)
-  
-                            }
-                          })
-                        }
-                       
                     })
                 }),
                 onEnd: ((res) => {
                     console.log(res)
                 })
-                
             });
     }
-    
+    const handleEventType = () => {
+      let _eventType = []
+      if(customizeRecords){
+        Object.entries(customizeRecords).map(([key, value]) => {
+          console.log(key)
+          if(evenType.includes(key) === false){
+            _eventType.push(key)
+            console.log(key)
+            setEvenType(_eventType)
+          }
+        })
+      }
+      
+    }
 
     function handleLogout () {
         setAccessToken('')
@@ -101,7 +101,8 @@ export default function SalesContextProvider({ children }) {
         setIsLoading,
         groupPostsbyUserID,
         setCustomizeRecords,
-        setEvenType
+        setEvenType,
+        handleEventType
       },
     };
 
