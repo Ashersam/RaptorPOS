@@ -11,11 +11,12 @@ export default function SalesContextProvider({ children }) {
     const [ accessToken, setAccessToken ] = useState()
     const [ salesRecord, setSalesRecord ] = useState()
     const [isLoading, setIsLoading] = useState(false)
+    const [evenType, setEvenType] = useState([])
     const [customizeRecords, setCustomizeRecords] = useState()
     let grpcRequest
 
     const groupPostsbyUserID = (arrayGroupbyvlaue, userID) => {
-        console.log("group")
+        // grouping based on eventype before display
         return arrayGroupbyvlaue?.reduce((result, currentValue) => {
           (result[currentValue[userID]] = result[currentValue[userID]] || []).push(
             currentValue
@@ -24,14 +25,19 @@ export default function SalesContextProvider({ children }) {
         }, {});
     };
 
-    function fetchSalesRecord (){
+    const timeout = (ms) => {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    };
+  
+
+    function fetchSalesRecord (eventAction){
             const sales = []
             const tentID = new UUID()
             const salesRequest = new StreamEventsRequest()
             tentID.setUuid(environmental.TENANTID)
             salesRequest.setTenantid(tentID) //ref passing tenantID as wrapper
             salesRequest.setEventtype('sales')
-            salesRequest.addEventaction('create')
+            salesRequest.addEventaction(eventAction)
             salesRequest.setLastindex("0")
             setIsLoading(true)
             grpcRequest = grpc.invoke(NgoAPI.streamEvents, {
@@ -44,15 +50,26 @@ export default function SalesContextProvider({ children }) {
                 onMessage: ((message) => {
                    sales.push(message.toObject())
                     localforage.setItem("salesrecord",sales).then((records) => {
-                        if(records.length > 84){
-                            console.log(records)
+                        if(records.length > 10){
                             setSalesRecord(records)
                             setIsLoading(false)
-                            setCustomizeRecords(groupPostsbyUserID(salesRecord, "eventtype"))
                         }else{
                             setIsLoading(true)
                         }
                             
+                    }).then(() =>{
+                        if(customizeRecords){
+                          setCustomizeRecords(groupPostsbyUserID(salesRecord, "eventtype"))
+                          Object.entries(customizeRecords).map(([key, value]) => {
+                            if(evenType.includes(key) === false){
+                              const _eventType = [...evenType]
+                              _eventType.push(key)
+                              setEvenType(_eventType)
+  
+                            }
+                          })
+                        }
+                       
                     })
                 }),
                 onEnd: ((res) => {
@@ -61,6 +78,7 @@ export default function SalesContextProvider({ children }) {
                 
             });
     }
+    
 
     function handleLogout () {
         setAccessToken('')
@@ -73,7 +91,8 @@ export default function SalesContextProvider({ children }) {
         accessToken,
         salesRecord,
         isLoading,
-        customizeRecords
+        customizeRecords,
+        evenType
       },
       actions: {
         setAccessToken,
@@ -81,7 +100,8 @@ export default function SalesContextProvider({ children }) {
         fetchSalesRecord,
         setIsLoading,
         groupPostsbyUserID,
-        setCustomizeRecords
+        setCustomizeRecords,
+        setEvenType
       },
     };
 

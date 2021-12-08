@@ -1,4 +1,4 @@
-import '../styles.css';
+import 'tailwindcss/tailwind.css';
 
 function RaptorPos({ Component, pageProps }) {
   return (

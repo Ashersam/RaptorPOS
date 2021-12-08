@@ -1,9 +1,10 @@
 import React from 'react'
 import { ChevronDownIcon } from '@heroicons/react/solid';
 
-export default function Accordion({open, title, groupElement}) {
+export default function Accordion({open, title, children, setSelectedFilter}) {
     const [isShow, setIsShow] = React.useState(open);
     const handleClick = () => {
+      setSelectedFilter("")
         setIsShow(!isShow);
     };
     
@@ -27,7 +28,7 @@ export default function Accordion({open, title, groupElement}) {
             <div>
               <div className="m-4">
                 <div className="flex gap-4">
-                {groupElement}
+                  {children}
                 </div>
               </div>
             </div>
